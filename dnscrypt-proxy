@@ -1,0 +1,118 @@
+#!/bin/sh /etc/rc.common
+
+# Derived from the init.d script provided by
+# https://github.com/jedisct1/dnscrypt-proxy/
+# Copyright (c) 2018
+# Frank Denis <j at pureftpd dot org>
+#
+# Contributor: Github user Deka-O <dek at btr dot zone>
+
+START=18
+# Start before dnsmasq which has a START value of 19
+
+NAME="dnscrypt-proxy"
+EXTRA_COMMANDS="status"
+EXTRA_HELP="        status  Display the status of the service"
+
+DIR="/opt/$NAME"
+###SETUP: Set the directory where your dnscrypt-proxy resides
+# Can be commented out/empty if the dnscrypt executable is in $PATH
+#
+# default: /opt/dnscrypt-proxy
+
+CONF="/etc/config/$NAME/$NAME.toml"
+###SETUP: Set the path to your dnscrypt-proxy config
+# Can be commented out/empty if a 'dnscrypt-proxy.toml' file exits
+# in the same directory as the dnscrypt-proxy executable,
+# as that will be used if no config is provided as an argument
+#
+# default: /etc/config/dnscrypt-proxy/dnscrypt-proxy.toml
+
+CMD="dnscrypt-proxy"
+# Name of the executable
+# No need to be changed unless it is chosen to rename the main executable
+#
+# default: dnscrypt-proxy
+
+if [ -n "$DIR" ]; then
+        CMD="$DIR/$CMD"
+	# Prefix directory to $CMD in-case $DIR is set
+fi
+
+if [ -n "$CONF" ]; then
+	CMD="$CMD -config $CONF"
+	# Append config commandline option with argument in-case $CONF is set
+fi
+
+# CMD with default parameters will evaluate to
+# /opt/dnscrypt-proxy/dnscrypt-proxy -conf /etc/config/dnscrypt-proxy/dnscrypt-proxy.toml
+
+
+PID_FILE="/var/run/$NAME.pid"
+STDOUT_LOG="/var/log/$NAME.log"
+STDERR_LOG="/var/log/$NAME.err"
+# syslog is not availabe in OpenWRT and can be turned off in the dnscrypt-proxy.toml
+
+get_pid() {
+	cat "$PID_FILE"
+}
+
+is_running() {
+	[ -f "$PID_FILE" ] && \
+	ps | grep  $(get_pid) | grep "$CMD" &> /dev/null
+}
+
+start() {
+	if is_running; then
+		echo "$NAME is already started"
+	else
+		echo "Starting $NAME"
+		$CMD >> "$STDOUT_LOG" 2>> "$STDERR_LOG" &
+		echo $! > "$PID_FILE"
+		if ! is_running; then
+			echo "Unable to start $NAME, see $STDOUT_LOG and $STDERR_LOG"
+		fi
+	fi
+}
+
+stop() {
+	if is_running; then
+		echo -n "Stopping $NAME..."
+		kill $(get_pid)
+		for i in $(seq 1 10)
+			do
+				if ! is_running; then
+					break
+				fi
+				echo -n "."
+				sleep 1
+			done
+			echo ""
+			if is_running; then
+				echo "Not stopped; may still be shutting down or shutdown may have failed"
+			else
+				echo "Stopped"
+				if [ -f "$PID_FILE" ]; then
+					rm "$PID_FILE"
+				fi
+			fi
+	else
+		echo "$NAME is not running"
+	fi
+}
+
+restart() {
+	stop
+	if is_running; then
+		echo "Unable to stop $NAME, will not attempt to start"
+	fi
+	start
+}
+
+status() {
+	if is_running; then
+		echo "$NAME is running under PID:$(get_pid)"
+	else
+		echo "$NAME is not running"
+	fi
+}
