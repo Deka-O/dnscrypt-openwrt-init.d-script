@@ -41,7 +41,7 @@ fi
 
 if [ -n "$CONF" ]; then
 	CMD="$CMD -config $CONF"
-	# Append config commandline option with argument in-case $CONF is set
+	# Append config command-line option with argument in-case $CONF is set
 fi
 
 # CMD with default parameters will evaluate to
@@ -51,7 +51,7 @@ fi
 PID_FILE="/var/run/$NAME.pid"
 STDOUT_LOG="/var/log/$NAME.log"
 STDERR_LOG="/var/log/$NAME.err"
-# syslog is not availabe in OpenWRT and can be turned off in the dnscrypt-proxy.toml
+# syslog is not available in OpenWRT and can be turned off in the dnscrypt-proxy.toml
 
 get_pid() {
 	cat "$PID_FILE"
