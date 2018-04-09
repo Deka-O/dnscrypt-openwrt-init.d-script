@@ -10,24 +10,9 @@
 START=18
 # Start before dnsmasq which has a START value of 19
 
-NAME="dnscrypt-proxy"
+NAME="DNSCrypt"
 EXTRA_COMMANDS="status"
 EXTRA_HELP="        status  Display the status of the service"
-
-DIR="/opt/$NAME"
-###SETUP: Set the directory where your dnscrypt-proxy resides
-# Can be commented out/empty if the dnscrypt executable is in $PATH
-#
-# default: /opt/dnscrypt-proxy
-
-CONF="/etc/$NAME/$NAME.toml"
-###SETUP: Set the path to your dnscrypt-proxy config
-# Can be commented out/empty if a 'dnscrypt-proxy.toml' file exits
-# in the same directory as the dnscrypt-proxy executable,
-# as that will be used if no config is provided as an argument
-#
-# default: /etc/dnscrypt-proxy/dnscrypt-proxy.toml
-
 EXEC="dnscrypt-proxy"
 # Name of the executable
 # No need to be changed unless it is chosen to rename the main executable
@@ -35,6 +20,22 @@ EXEC="dnscrypt-proxy"
 # default: dnscrypt-proxy
 
 CMD=$EXEC
+
+DIR="/opt/$EXEC"
+###SETUP: Set the directory where your dnscrypt-proxy resides
+# Can be commented out/empty if the dnscrypt executable is in $PATH
+#
+# default: /opt/dnscrypt-proxy
+
+CONF="/etc/$EXEC/$EXEC.toml"
+###SETUP: Set the path to your dnscrypt-proxy config
+# Can be commented out/empty if a 'dnscrypt-proxy.toml' file exits
+# in the same directory as the dnscrypt-proxy executable,
+# as that will be used if no config is provided as an argument
+#
+# default: /etc/dnscrypt-proxy/dnscrypt-proxy.toml
+
+
 if [ -n "$DIR" ]; then
         CMD="$DIR/$CMD"
 	# Prefix directory to $CMD in-case $DIR is set
@@ -48,7 +49,7 @@ fi
 # commandline(CMD) with default parameters will evaluate to
 # /opt/dnscrypt-proxy/dnscrypt-proxy -conf /etc/dnscrypt-proxy/dnscrypt-proxy.toml
 
-PID_FILE="/var/run/$NAME.pid"
+PID_FILE="/var/run/$EXEC.pid"
 
 SYSLOG=0
 # Disable SYSLOG to log to dedicated log files
@@ -58,8 +59,8 @@ SYSLOG=0
 # default: syslog is turned on
 
 if [ $SYSLOG != "1" ]; then
-        STDOUT_LOG="/var/log/$NAME.log"
-        STDERR_LOG="/var/log/$NAME.err"
+        STDOUT_LOG="/var/log/$EXEC.log"
+        STDERR_LOG="/var/log/$EXEC.err"
 fi
 
 get_pid() {
