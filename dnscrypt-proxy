@@ -7,8 +7,8 @@
 #
 # Contributor: Github user Deka-O <dek at btr dot zone>
 
-START=18
-# Start before dnsmasq which has a START value of 19
+START=21
+# Start right after network or else binding the port will fail
 
 NAME="DNSCrypt"
 EXTRA_COMMANDS="status"
