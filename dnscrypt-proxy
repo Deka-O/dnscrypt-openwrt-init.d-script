@@ -51,7 +51,7 @@ fi
 PID_FILE="/var/run/$NAME.pid"
 
 SYSLOG=1
-if [ $SYSLOG -eq 1 ]; then
+if [ $SYSLOG -ne 1 ]; then
 	STDOUT_LOG="/var/log/$NAME.log"
 	STDERR_LOG="/var/log/$NAME.err"
 fi
