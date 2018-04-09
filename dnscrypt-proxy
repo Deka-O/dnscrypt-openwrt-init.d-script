@@ -88,6 +88,7 @@ start() {
 			else
 				echo "see syslog via logread command"
 			fi
+		fi
 	fi
 }
 
