@@ -51,7 +51,8 @@ fi
 PID_FILE="/var/run/$NAME.pid"
 STDOUT_LOG="/var/log/$NAME.log"
 STDERR_LOG="/var/log/$NAME.err"
-# syslog is not available in OpenWRT and can be turned off in the dnscrypt-proxy.toml
+# syslog logging is available in OpenWRT and can be configured in the dnscrypt-proxy.toml
+# default: syslog is turned on
 
 get_pid() {
 	cat "$PID_FILE"
