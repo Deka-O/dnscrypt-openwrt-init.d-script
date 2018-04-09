@@ -28,12 +28,13 @@ CONF="/etc/$NAME/$NAME.toml"
 #
 # default: /etc/dnscrypt-proxy/dnscrypt-proxy.toml
 
-CMD="dnscrypt-proxy"
+EXEC="dnscrypt-proxy"
 # Name of the executable
 # No need to be changed unless it is chosen to rename the main executable
 #
 # default: dnscrypt-proxy
 
+CMD=$EXEC
 if [ -n "$DIR" ]; then
         CMD="$DIR/$CMD"
 	# Prefix directory to $CMD in-case $DIR is set
@@ -44,22 +45,22 @@ if [ -n "$CONF" ]; then
 	# Append config command-line option with argument in-case $CONF is set
 fi
 
-# CMD with default parameters will evaluate to
+# commandline(CMD) with default parameters will evaluate to
 # /opt/dnscrypt-proxy/dnscrypt-proxy -conf /etc/dnscrypt-proxy/dnscrypt-proxy.toml
-
 
 PID_FILE="/var/run/$NAME.pid"
 
-SYSLOG=1
-if [ $SYSLOG -ne 1 ]; then
-	STDOUT_LOG="/var/log/$NAME.log"
-	STDERR_LOG="/var/log/$NAME.err"
-fi
+SYSLOG=0
 # Disable SYSLOG to log to dedicated log files
 # syslog logging is enabled by default and can be configured in the dnscrypt-proxy.toml
 # If syslog is used, dnscrypt-proxy will not log to stdout and stderr
-# which would result in the log files defined above to be just empty 
+# which would result in the log files defined just below to be just empty 
 # default: syslog is turned on
+
+if [ $SYSLOG != "1" ]; then
+        STDOUT_LOG="/var/log/$NAME.log"
+        STDERR_LOG="/var/log/$NAME.err"
+fi
 
 get_pid() {
 	cat "$PID_FILE"
@@ -67,7 +68,7 @@ get_pid() {
 
 is_running() {
 	[ -f "$PID_FILE" ] && \
-	ps | grep  $(get_pid) | grep "$CMD" &> /dev/null
+	ps | grep  $(get_pid) | grep "$EXEC" &> /dev/null
 }
 
 start() {
@@ -75,18 +76,18 @@ start() {
 		echo "$NAME is already started"
 	else
 		echo "Starting $NAME"
-		if [ $SYSLOG -eq 1 ]; then
+		if [ $SYSLOG == 1 ]; then
 			$CMD &> /dev/null &
 		else
 			$CMD >> "$STDOUT_LOG" 2>> "$STDERR_LOG" &
 		fi
 		echo $! > "$PID_FILE"
 		if ! is_running; then
-			echo -n "Unable to start $NAME, "
-			if [ $SYSLOG -eq 1 ]; then
-				echo "see $STDOUT_LOG and $STDERR_LOG"
+			echo -n "Unable to start $NAME, see "
+			if [ $SYSLOG == 1 ]; then
+				echo "syslog via logread command"
 			else
-				echo "see syslog via logread command"
+				echo "$STDOUT_LOG and $STDERR_LOG"
 			fi
 		fi
 	fi
