@@ -20,13 +20,13 @@ DIR="/opt/$NAME"
 #
 # default: /opt/dnscrypt-proxy
 
-CONF="/etc/config/$NAME/$NAME.toml"
+CONF="/etc/$NAME/$NAME.toml"
 ###SETUP: Set the path to your dnscrypt-proxy config
 # Can be commented out/empty if a 'dnscrypt-proxy.toml' file exits
 # in the same directory as the dnscrypt-proxy executable,
 # as that will be used if no config is provided as an argument
 #
-# default: /etc/config/dnscrypt-proxy/dnscrypt-proxy.toml
+# default: /etc/dnscrypt-proxy/dnscrypt-proxy.toml
 
 CMD="dnscrypt-proxy"
 # Name of the executable
@@ -45,7 +45,7 @@ if [ -n "$CONF" ]; then
 fi
 
 # CMD with default parameters will evaluate to
-# /opt/dnscrypt-proxy/dnscrypt-proxy -conf /etc/config/dnscrypt-proxy/dnscrypt-proxy.toml
+# /opt/dnscrypt-proxy/dnscrypt-proxy -conf /etc/dnscrypt-proxy/dnscrypt-proxy.toml
 
 
 PID_FILE="/var/run/$NAME.pid"
