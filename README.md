@@ -1,3 +1,14 @@
+## Deprecated
+There is a far simpler solution at https://github.com/jedisct1/dnscrypt-proxy/issues/126
+
+Check post #4 by the-w1nd, that init script uses a far more elegant solution using SERVICE_DAEMONIZE=1
+
+Though the START value can be changed from 50 to 21
+
+For more reference regarding DNSCrypt on OpenWRT:
+
+https://github.com/jedisct1/dnscrypt-proxy/issues/162
+
 # dnscrypt-openwrt-init.d-script
 Init script for the v2 version of DNScrypt in an OpenWRT env
 
